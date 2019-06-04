@@ -105,7 +105,7 @@ class DrunkRepositoryImpl @Inject constructor(
 //                    state = NaviState.WAIT
 //                    stateLD.value = state
 //                }
-
+            else -> return
         }
 
         println("point type=" + getPointType(text) )
@@ -114,29 +114,43 @@ class DrunkRepositoryImpl @Inject constructor(
         appExecutors.diskIO().execute {
             val id = Random.nextLong()
 
-            val point = Point(id, runGuid!!, Date().time, getPoint(text), getPointType(text).num )
+            val point = Point(id, runGuid!!, Date().time, getPoint(text), getPointType(text).num, userId )
             println("point =" + point)
 
-            pointsDao.insert( point )
 
-            dNaviService.postValues( TOKEN, userId, runGuid!!, point.time, getPoint(text) ).enqueue( object :
-                Callback<Unit> {
-                override fun onFailure(call: Call<Unit>, t: Throwable) {
+            var needSave = false
 
-                    println("on failure, t=" + t.message )
-                    //do smth
+            val lastPoint = pointsDao.getLastInRun(runGuid!!)
+            if ( lastPoint.isNotEmpty() ) {
+                println("last in run = " + lastPoint[0].text)
+                if ( getPoint(text) != lastPoint[0].text) {
+                    needSave = true
                 }
+            } else {
+                needSave = true
+            }
 
-                override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+            if (needSave) {
+                pointsDao.insert(point)
+                dNaviService.postValues(TOKEN, point.user_id, point.guid, point.time, point.text).enqueue(object :
+                    Callback<Unit> {
+                    override fun onFailure(call: Call<Unit>, t: Throwable) {
 
-                    if (response.isSuccessful()) {
-                        appExecutors.diskIO().execute{pointsDao.setSent(id)}
-                    } else {
-                        // Handle other responses
+                        println("on failure, t=" + t.message)
                     }
-                }
 
-            })
+                    override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+
+                        if (response.isSuccessful()) {
+                            appExecutors.diskIO().execute { pointsDao.setSent(id) }
+                        } else {
+                            // Handle other responses
+                        }
+                    }
+
+                })
+            }
+
 
             appExecutors.mainThread().execute{
                 if( getPointType(text) == Points.FINISH ) {

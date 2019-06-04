@@ -22,6 +22,9 @@ interface PointsDao {
     @Query("SELECT * FROM point WHERE id = :id")
     fun getById(id: Long): LiveData<Point>
 
+    @Query("SELECT * FROM point WHERE run_guid = :run_guid ORDER BY time DESC LIMIT 1")
+    fun getLastInRun(run_guid: String): List<Point>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(vararg points: Point)
 

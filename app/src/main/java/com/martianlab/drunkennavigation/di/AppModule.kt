@@ -38,7 +38,7 @@ class AppModule {
     @Provides
     fun provideDNaviService(): DNaviService {
         return Retrofit.Builder()
-            .baseUrl("http://dr.tochilov.ru/rest/")
+            .baseUrl("http://dr.tochilov.ru/")
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(LiveDataCallAdapterFactory())
             .build()

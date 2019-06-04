@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 
 
 @Entity(
-    indices = [Index(value=["run_guid", "text"], unique = true)]
+    indices = [Index(value=["run_guid", "text"], unique = false)]
 )
 data class Point(
 
@@ -22,6 +22,8 @@ data class Point(
     val text : String,
     @ColumnInfo(name = "type")
     val type: Int,
+    @ColumnInfo(name = "user_id")
+    val user_id: Int,
     @ColumnInfo(name = "sent")
     var sent: Boolean = false
 

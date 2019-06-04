@@ -29,7 +29,7 @@ const val USER_DATA_FILENAME = "users.json"
  */
 @Database(
     entities = [Point::class, User::class],
-    version = 5,
+    version = 7,
     exportSchema = true
 )
 abstract class DrunkNaviDb : RoomDatabase() {

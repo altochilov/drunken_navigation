@@ -37,7 +37,7 @@ class SendWorker constructor(
         for( point in points ) {
             val id = point.id
 
-            dNaviService.postValues( TOKEN, 0, point.guid, point.time, point.text ).enqueue( object :
+            dNaviService.postValues( TOKEN, point.user_id, point.guid, point.time, point.text ).enqueue( object :
                 Callback<Unit> {
                 override fun onFailure(call: Call<Unit>, t: Throwable) {
                     appExecutors.mainThread().execute {

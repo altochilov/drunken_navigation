@@ -71,7 +71,7 @@ class ListFragment : Fragment() {
 
 
         qRscanViewModel.items.observe(viewLifecycleOwner, Observer {
-                result-> adapter.setValues(result.sortedBy { it.time })
+                result-> adapter.setValues(result.sortedByDescending { it.time })
         })
 
         qRscanViewModel.retry()

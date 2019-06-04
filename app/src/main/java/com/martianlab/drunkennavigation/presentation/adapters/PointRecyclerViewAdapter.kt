@@ -35,7 +35,7 @@ class PointRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
-        holder.mIdView.text = (position+1).toString()
+        holder.mIdView.text = (mValues.size - position).toString()
         holder.mContentView.text = item.text
         holder.mTimeView.text = item.time
         holder.mImageView.setImageResource(
